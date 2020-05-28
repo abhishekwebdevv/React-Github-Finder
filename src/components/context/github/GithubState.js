@@ -8,8 +8,6 @@ import {
   CLEAR_USERS,
   GET_REPOS,
   SET_LOADING,
-  SET_ALERT,
-  REMOVE_ALERT,
 } from "../types";
 
 const GithubState = (props) => {
@@ -35,9 +33,33 @@ const GithubState = (props) => {
     });
   };
 
-  // GET USERS
+  // GET USER
+  const getUser = async (username) => {
+    setLoading();
+
+    const res = await Axios.get(
+      `https://api.github.com/users/${username}?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+    );
+
+    dispatch({
+      type: GET_USER,
+      payload: res.data,
+    });
+  };
 
   // GET REPOS
+  const getUserRepos = async (username) => {
+    setLoading();
+
+    const res = await Axios.get(
+      `https://api.github.com/users/${username}/repos?per_page=5&sort=created:asc&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+    );
+
+    dispatch({
+      type: GET_REPOS,
+      payload: res.data,
+    });
+  };
 
   // CLEAR USERS
   const clearUsers = () => dispatch({ type: CLEAR_USERS });
@@ -54,6 +76,8 @@ const GithubState = (props) => {
         loading: state.loading,
         searchUsers,
         clearUsers,
+        getUser,
+        getUserRepos,
       }}
     >
       {props.children}
